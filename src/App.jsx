@@ -10,21 +10,30 @@ const Stars = () => {
   let theta = 0;
   let mouseX = 0;
   let mouseY = 0;
+  let deltaX = 0;
+  let deltaY = 0;
   const moveMouse = (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
   };
+  // const onWheel = (e) => {
+  //   deltaX = e.deltaX;
+  //   deltaY = e.deltaY;
+  // };
   useEffect(() => {
     window.addEventListener("mousemove", moveMouse);
-  });
+    // window.addEventListener("wheel", onWheel);
+  }, []);
   useFrame((a, b) => {
     // const r = Math.random() * (theta += 0.001);
     let moveX = mouseX * 0.001;
     let moveY = mouseY * 0.001;
+    // let delX = deltaX * 0.1;
+    // let delY = deltaY * 0.1;
     // group.current.rotation.y = moveX;
     group.current.rotation.x = moveY;
     group.current.rotation.y = moveX;
-    group.current.rotation.z = theta += 0.0015;
+    group.current.rotation.z = theta += 0.0005;
   });
 
   const [geo, mat, coords] = useMemo(() => {
