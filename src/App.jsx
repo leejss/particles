@@ -6,34 +6,55 @@ import "./App.css";
 
 const Stars = () => {
   let group = useRef();
-  // let theta = 0;
-  let theta = 0;
   let mouseX = 0;
   let mouseY = 0;
-  let deltaX = 0;
-  let deltaY = 0;
+  let deltaX = useRef(0);
+  let deltaY = useRef(0);
   const moveMouse = (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
   };
-  // const onWheel = (e) => {
-  //   deltaX = e.deltaX;
-  //   deltaY = e.deltaY;
-  // };
   useEffect(() => {
     window.addEventListener("mousemove", moveMouse);
-    // window.addEventListener("wheel", onWheel);
+    window.addEventListener("wheel", (e) => {
+      if (e.deltaY > 0) {
+        deltaY.current += 1;
+      }
+      if (e.deltaY < 0) {
+        deltaY.current -= 1;
+      }
+      if (e.deltaX > 0) {
+        deltaX.current += 1;
+      }
+      if (e.deltaX < 0) {
+        deltaX.current -= 1;
+      }
+    });
   }, []);
-  useFrame((a, b) => {
-    // const r = Math.random() * (theta += 0.001);
-    let moveX = mouseX * 0.001;
-    let moveY = mouseY * 0.001;
-    // let delX = deltaX * 0.1;
-    // let delY = deltaY * 0.1;
-    // group.current.rotation.y = moveX;
-    group.current.rotation.x = moveY;
-    group.current.rotation.y = moveX;
-    group.current.rotation.z = theta += 0.0005;
+
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+
+    let moveX = mouseX * 0.002;
+    let moveY = mouseY * 0.002;
+    group.current.rotation.x = THREE.MathUtils.lerp(
+      group.current.rotation.x,
+      Math.cos(t / 2) / 8 + moveY + deltaY.current * 0.06,
+      0.1
+    );
+
+    group.current.rotation.y = THREE.MathUtils.lerp(
+      group.current.rotation.y,
+      Math.sin(t / 2) / 8 + moveX + deltaX.current * 0.05,
+      0.1
+    );
+
+    // group.current.rotation.z = theta += 0.0005;
+    group.current.rotation.z = THREE.MathUtils.lerp(
+      group.current.rotation.z,
+      Math.sin(t / 4) / 5,
+      0.1
+    );
   });
 
   const [geo, mat, coords] = useMemo(() => {
